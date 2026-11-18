@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cairo, Inter, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
@@ -22,33 +22,38 @@ import { languageDirection } from "@/lib/i18n/language";
 import { buildAlternates, PATH_HEADER } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/seo/site";
 
-// Self-hosted via next/font — replaces the external Google Fonts <link> for
-// better performance, no FOUT, and so the CSS variables below are guaranteed
-// to be defined before any component renders.
+// Self-hosted via next/font/local. The variable-weight woff2 files live in
+// app/fonts (OFL licensed, see LICENSE-*.txt there). They are committed rather
+// than pulled through next/font/google because that fetches from Google Fonts
+// at build time, and a failed fetch on the build server fails the whole deploy.
 //
-// Cairo includes both Latin and Arabic subsets, so it doubles as the universal
-// fallback for any element whose primary font (Inter or Playfair) lacks the
-// glyphs being rendered — this is what stops Arabic headings from falling
-// back to the browser's default serif (Times New Roman).
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
+// Cairo covers both Latin and Arabic, so it doubles as the universal fallback
+// for any element whose primary font (Inter or Playfair) lacks the glyphs
+// being rendered — this is what stops Arabic headings from falling back to
+// the browser's default serif (Times New Roman).
+const cairo = localFont({
+  src: "./fonts/cairo-wght.woff2",
+  weight: "200 1000",
+  style: "normal",
   variable: "--font-cairo",
   display: "swap",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+const inter = localFont({
+  src: "./fonts/inter-latin-wght.woff2",
+  weight: "100 900",
+  style: "normal",
   variable: "--font-inter",
   display: "swap",
 });
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const playfair = localFont({
+  src: "./fonts/playfair-display-latin-wght.woff2",
+  weight: "400 900",
+  style: "normal",
   variable: "--font-playfair",
   display: "swap",
+  adjustFontFallback: "Times New Roman",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
